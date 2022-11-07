@@ -1,19 +1,10 @@
 package com.example.chatapp.firebase
 
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class FirebaseHelper {
-    fun getInfoAboutUser() {
-        val user = Firebase.auth.currentUser
-        user?.let {
-            val name = user.displayName
-            val email = user.email
-            val photoUrl = user.photoUrl
 
-            val emailVerified = user.isEmailVerified
+const val BASE_URL = "https://chatapp-79659-default-rtdb.firebaseio.com/"
+val database = Firebase.database
 
-            val uid = user.uid
-        }
-    }
-}
+

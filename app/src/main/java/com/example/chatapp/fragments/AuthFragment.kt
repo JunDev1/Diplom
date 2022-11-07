@@ -14,6 +14,7 @@ import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentAuthBinding
 import com.example.chatapp.func.replaceFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 private const val TAG = "AuthFragment"
 private const val ARG_PARAM2 = "param2"
@@ -24,6 +25,7 @@ class AuthFragment : Fragment() {
     private var _binding : FragmentAuthBinding? = null
     private val binding get() = _binding!!
     private val auth = FirebaseAuth.getInstance()
+    private val authDB = FirebaseDatabase.getInstance()
 
 
     override fun onCreateView(
@@ -37,17 +39,27 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        _binding?.signUpTv?.setOnClickListener {
+        binding.signUpTv.setOnClickListener {
             replaceFragment(RegFragment())
             Log.d(TAG, "Fragment success replaced")
         }
-
         binding.signInBtn.setOnClickListener {
             authentication()
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser != null) {
+            replaceFragment(ProfileFragment())
+        } else {
+
+        }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun authentication() {
         val email = binding.emailTfEt.text.toString()
         val password = binding.passwordTfEt.text.toString()
@@ -57,7 +69,7 @@ class AuthFragment : Fragment() {
                 Log.d(TAG, "signInWithEmail:success")
                 val user = auth.currentUser
                 auth.updateCurrentUser(user!!)
-                replaceFragment(MessageListFragment())
+                replaceFragment(ProfileFragment())
                 Log.d(TAG, "Fragment success replaced")
             } else {
                 Log.w(TAG, "signInWithEmail:failure")
@@ -67,9 +79,4 @@ class AuthFragment : Fragment() {
         }
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

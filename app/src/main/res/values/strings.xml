@@ -11,4 +11,7 @@
     <string name="sign_up">sign_up</string>
     <string name="back_to_auth">Back to auth</string>
     <string name="text_message">text message</string>
+    <string name="your_photo_profile">Your photo profile</string>
+    <string name="your_username">Your username</string>
+    <string name="your_surname">Your surname</string>
 </resources>

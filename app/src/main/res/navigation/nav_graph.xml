@@ -28,4 +28,9 @@
         android:name="com.example.chatapp.fragments.MessageListFragment"
         android:label="fragment_message_list"
         tools:layout="@layout/fragment_message_list" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.chatapp.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

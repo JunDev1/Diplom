@@ -14,10 +14,12 @@
             android:id="@+id/email_tf"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/password_tf"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:hint="@string/email"
+            android:layout_marginTop="130dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -44,13 +46,14 @@
                 android:inputType="textPassword"
                 />
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/confirm_password_tf"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/sign_up_btn"
+            app:layout_constraintBottom_toTopOf="@id/name_tf"
             android:hint="@string/confirm_password"
             app:endIconMode="password_toggle"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -63,6 +66,39 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_tf"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/confirm_password_tf"
+            android:hint="@string/your_username"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/name_tf_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/surname_tf"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name_tf"
+            android:hint="@string/your_surname"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/surname_tf_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
         <Button
             android:id="@+id/sign_up_btn"
             android:layout_width="wrap_content"
@@ -70,10 +106,9 @@
             android:layout_gravity="center"
             android:text="@string/sign_up"
             android:textSize="@dimen/sign_in_size_btn"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/surname_tf"/>
 
         <TextView
             android:id="@+id/back_to_auth_tv"
