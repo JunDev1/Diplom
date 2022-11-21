@@ -7,16 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.firebase.User
 import com.example.chatapp.firebase.database
 import com.example.chatapp.func.replaceFragment
+import com.example.chatapp.viewmodels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -51,15 +57,15 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var observer: MyLifecycleObserver
-    private lateinit var auth : FirebaseAuth
-    private val dbRef = FirebaseDatabase.getInstance().getReference("Users/userId")
-    internal var user : String? = null
+    private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observer = MyLifecycleObserver(requireActivity().activityResultRegistry)
         lifecycle.addObserver(observer)
-        gettingDataFromDatabase()
+
+        val viewModel : ProfileViewModel by viewModels()
     }
 
     override fun onCreateView(
@@ -75,6 +81,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val selectBtn = binding.profileIV
 
+        gettingDataFromDatabase()
 
         selectBtn.setOnClickListener {
             observer.selectImage()
@@ -88,18 +95,18 @@ class ProfileFragment : Fragment() {
     }
 
     private fun gettingDataFromDatabase() {
-            val postListener = object :ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val username = snapshot.value as User
-                binding.usernameTV.text = username.toString()
+        val username = binding.usernameTV
+        dbRef.database.getReference("Users/username").addValueEventListener(object : ValueEventListener{
+        override fun onDataChange(snapshot: DataSnapshot) {
+            Log.d(TAG,"DataChange current work")
+            val post = snapshot.getValue(User::class.java)
+            username.text = post?.name.toString()
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d(TAG, "loadPost: Error", error.toException())
+        override fun onCancelled(error: DatabaseError) {
+            Log.d(TAG, "loadPost: Error", error.toException())
+            Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT)
             }
-
-        }
-        dbRef.addValueEventListener(postListener)
-        dbRef.removeEventListener(postListener)
+        })
     }
 }
+
