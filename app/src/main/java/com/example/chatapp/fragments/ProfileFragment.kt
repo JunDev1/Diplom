@@ -1,36 +1,21 @@
 package com.example.chatapp.fragments
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
-import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
-import com.example.chatapp.firebase.User
-import com.example.chatapp.firebase.database
 import com.example.chatapp.func.replaceFragment
 import com.example.chatapp.viewmodels.ProfileViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
@@ -52,20 +37,20 @@ class MyLifecycleObserver (private val registry: ActivityResultRegistry)
     }
     }
 
-class ProfileFragment : Fragment() {
+open class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var observer: MyLifecycleObserver
-    private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
+    //private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
+
+    private val viewModel : ProfileViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observer = MyLifecycleObserver(requireActivity().activityResultRegistry)
         lifecycle.addObserver(observer)
-
-        val viewModel : ProfileViewModel by viewModels()
     }
 
     override fun onCreateView(
@@ -80,8 +65,12 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val selectBtn = binding.profileIV
+        val username = binding.usernameTV
 
-        gettingDataFromDatabase()
+
+        //gettingDataFromDatabase()
+
+        username.text = viewModel.gettingDataFromDB().toString()
 
         selectBtn.setOnClickListener {
             observer.selectImage()
@@ -94,19 +83,9 @@ class ProfileFragment : Fragment() {
 
     }
 
-    private fun gettingDataFromDatabase() {
-        val username = binding.usernameTV
-        dbRef.database.getReference("Users/username").addValueEventListener(object : ValueEventListener{
-        override fun onDataChange(snapshot: DataSnapshot) {
-            Log.d(TAG,"DataChange current work")
-            val post = snapshot.getValue(User::class.java)
-            username.text = post?.name.toString()
-            }
-        override fun onCancelled(error: DatabaseError) {
-            Log.d(TAG, "loadPost: Error", error.toException())
-            Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT)
-            }
-        })
-    }
+//    fun gettingDataFromDatabase() {
+//        val username = binding.usernameTV
+//        username.text = viewModel.gettingDataFromDB().toString()
+//    }
 }
 
