@@ -67,9 +67,6 @@ open class ProfileFragment : Fragment() {
         val selectBtn = binding.profileIV
         val username = binding.usernameTV
 
-
-        //gettingDataFromDatabase()
-
         username.text = viewModel.gettingDataFromDB().toString()
 
         selectBtn.setOnClickListener {

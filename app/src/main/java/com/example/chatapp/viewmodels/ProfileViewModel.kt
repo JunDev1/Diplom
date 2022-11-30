@@ -16,13 +16,11 @@ open class ProfileViewModel : ViewModel() {
     private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
     fun gettingDataFromDB() {
-        dbRef.database.getReference("Users/username").addValueEventListener(object :
+        dbRef.database.getReference("Users").child("username").addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-//                Log.d(TAG,"DataChange current work")
                 val post = snapshot.getValue(User::class.java)
                 post?.name.toString()
-
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.d(TAG, "loadPost: Error", error.toException())
