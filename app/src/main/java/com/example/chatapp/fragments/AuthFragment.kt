@@ -53,7 +53,7 @@ class AuthFragment : Fragment() {
         if (auth.currentUser != null) {
             replaceFragment(ProfileFragment())
         } else {
-            Toast.makeText(requireContext(), "Please, sign in", Toast.LENGTH_SHORT).show()
+
         }
     }
     override fun onDestroyView() {

@@ -59,9 +59,9 @@ class RegFragment : Fragment() {
         val name = binding.nameTfEt.text.toString()
         val surname = binding.surnameTfEt.text.toString()
 
-        val writeUser = User(name, surname, email, userId)
+        val writeUser = User(userId, name, surname, email)
 
-        dbRef.child("username").setValue(writeUser)
+        dbRef.child(userId).setValue(writeUser)
     }
 
     private fun registration() {
