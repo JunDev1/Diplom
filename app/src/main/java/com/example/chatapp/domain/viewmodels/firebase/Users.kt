@@ -1,4 +1,4 @@
-package com.example.chatapp.firebase
+package com.example.chatapp.domain.viewmodels.firebase
 
 import com.google.firebase.database.IgnoreExtraProperties
 
@@ -8,6 +8,4 @@ data class User(
     val surname: String? = null,
     val email: String? = null,
     val userId : String? = null
-) {
-
-}
+)

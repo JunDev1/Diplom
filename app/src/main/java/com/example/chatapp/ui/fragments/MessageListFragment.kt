@@ -1,4 +1,4 @@
-package com.example.chatapp.fragments
+package com.example.chatapp.ui.fragments
 
 import android.nfc.Tag
 import android.os.Bundle

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/authFragment"
-        android:name="com.example.chatapp.fragments.AuthFragment"
+        android:name="com.example.chatapp.ui.fragments.AuthFragment"
         android:label="fragment_auth"
         tools:layout="@layout/fragment_auth" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/regFragment"
-        android:name="com.example.chatapp.fragments.RegFragment"
+        android:name="com.example.chatapp.ui.fragments.RegFragment"
         android:label="fragment_reg"
         tools:layout="@layout/fragment_reg" >
         <action
@@ -25,12 +25,12 @@
     </fragment>
     <fragment
         android:id="@+id/messageListFragment"
-        android:name="com.example.chatapp.fragments.MessageListFragment"
+        android:name="com.example.chatapp.ui.fragments.MessageListFragment"
         android:label="fragment_message_list"
         tools:layout="@layout/fragment_message_list" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.chatapp.fragments.ProfileFragment"
+        android:name="com.example.chatapp.ui.fragments.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

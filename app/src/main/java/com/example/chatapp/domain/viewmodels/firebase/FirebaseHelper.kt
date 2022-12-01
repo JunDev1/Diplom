@@ -1,4 +1,4 @@
-package com.example.chatapp.firebase
+package com.example.chatapp.domain.viewmodels.firebase
 
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
