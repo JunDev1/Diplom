@@ -41,7 +41,6 @@ open class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
     private val viewModel : ProfileViewModel by viewModels()
 
     override fun onCreateView(
@@ -62,9 +61,6 @@ open class ProfileFragment : Fragment() {
             Log.d(TAG,"Data takes successful")
         }
         viewModel.gettingDataFromDB().observe(viewLifecycleOwner, usernameObserver)  //activity as LifecycleOwner - 1ый параметр
-
-//        username.text = viewModel.gettingDataFromDB().toString()
-
 
         exit.setOnClickListener {
             Firebase.auth.signOut().apply {

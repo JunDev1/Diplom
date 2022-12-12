@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.chatapp.databinding.FragmentRegBinding
+import com.example.chatapp.domain.viewmodels.RegViewModel
 import com.example.chatapp.domain.viewmodels.firebase.User
 import com.example.chatapp.func.replaceFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -25,14 +28,15 @@ class RegFragment : Fragment() {
 
     private var _binding: FragmentRegBinding? = null
     private val binding get() = _binding!!
-    private val reg = Firebase.auth
+    private lateinit var auth : FirebaseAuth
+    private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
+    //private val viewModel : RegViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         _binding = FragmentRegBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -40,7 +44,7 @@ class RegFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        auth = FirebaseAuth.getInstance()
         binding.signUpBtn.setOnClickListener {
             registration()
             writeNewUser()
@@ -53,15 +57,14 @@ class RegFragment : Fragment() {
     }
 
     private fun writeNewUser() {
-        val dbRef = FirebaseDatabase.getInstance().getReference("Users")
-        val userId = dbRef.push().key!!
+        val uid = dbRef.push().key!!
         val email = binding.emailTfEt.text.toString()
         val name = binding.nameTfEt.text.toString()
         val surname = binding.surnameTfEt.text.toString()
 
-        val writeUser = User(name, surname, email, userId)
+        val writeUser = User(name, surname, email, uid)
 
-        dbRef.child("username").setValue(writeUser)
+        dbRef.child(uid).setValue(writeUser)
     }
 
     private fun registration() {
@@ -77,15 +80,15 @@ class RegFragment : Fragment() {
             Toast.makeText(requireContext(), "Passwords don't match", Toast.LENGTH_SHORT).show()
         }
 
-        reg.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) {
                 if (it.isSuccessful) {
                     Log.d(TAG, "Success registration new user")
-                    val user = reg.currentUser
-                    reg.updateCurrentUser(user!!)
+                    val user = auth.currentUser
+                    auth.updateCurrentUser(user!!)
                     replaceFragment(ProfileFragment())
                 } else {
-                    Log.w(TAG, "createUserWithEmail:failure")
+                    Log.e(TAG, "createUserWithEmail:failure", it.exception)
                     Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT)
                         .show()
                 }

@@ -5,61 +5,45 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.chatapp.domain.viewmodels.firebase.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 
 const val TAG = "ProfileViewModel"
 
 open class ProfileViewModel : ViewModel() {
 
     private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
+    private val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
-    val getName : MutableLiveData<String> by lazy {
+    val getName: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
-//    fun gettingDataFromDB(onReceived : (String) -> Unit )  {
-//        dbRef.database.getReference("Users/username").addValueEventListener(object :
-//            ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                Log.d(TAG,"DataChange current work")
-//                onReceived(snapshot.getValue(User::class.java)?.name.toString())
-//                val data = snapshot.getValue(User::class.java)
-//                getName.postValue(
-//                    data.toString()
-//                )
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d(TAG, "loadPost: Error", error.toException())
-////                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT) requireContext - не должен быть во VM
-//            }
-//        })
-//    }
-
-    fun gettingDataFromDB() : LiveData<String>  {
-        if(getName.value == null) {
-            FirebaseDatabase.getInstance().getReference("Users/username")
-                .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val data = snapshot.getValue(User::class.java)
-                        getName.postValue(data!!.name.toString())
-                    }
-//                    Log.d(TAG, "DataChange current work")
-//                    val data = snapshot.getValue(User::class.java)
-//                    getName.postValue(
-//                        data.toString()
-//                    )
+    fun gettingDataFromDB(): LiveData<String> {
+        //Log.i(TAG, "Getting data")
+        val uid = dbRef.push().key!!
+        dbRef.orderByChild(uid).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (postSnapshot in snapshot.children) {
+                    Log.i(TAG, "Getting data")
+                    val data : User? = postSnapshot.getValue(User::class.java)
+                    getName.postValue(data!!.name.toString())
+                    //val data = snapshot.getValue(User::class.java)
+                    //getName.postValue(data!!.name.toString())
                 }
+                //Log.i(TAG, "Getting data")
+                //val data = snapshot.getValue(User::class.java)
+                //getName.postValue(data!!.name.toString())
+            }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d(TAG, "loadPost: Error", error.toException())
-//                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT) requireContext - не должен быть во VM
-                }
-            })
-        }
+            override fun onCancelled(error: DatabaseError) {
+                Log.d(TAG, "loadPost: Error", error.toException())
+            }
+        })
         return getName
     }
 
