@@ -24,7 +24,8 @@
         app:layout_constraintTop_toBottomOf="@id/profileIV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint= "Your name"/>
+        android:gravity="center"
+        android:hint= "@string/your_name"/>
 
     <TextView
         android:id="@+id/exitTV"
