@@ -32,12 +32,8 @@ open class ProfileViewModel : ViewModel() {
                     Log.i(TAG, "Getting data")
                     val data : User? = postSnapshot.getValue(User::class.java)
                     getName.postValue(data!!.name.toString())
-                    //val data = snapshot.getValue(User::class.java)
-                    //getName.postValue(data!!.name.toString())
                 }
-                //Log.i(TAG, "Getting data")
-                //val data = snapshot.getValue(User::class.java)
-                //getName.postValue(data!!.name.toString())
+
             }
 
             override fun onCancelled(error: DatabaseError) {
