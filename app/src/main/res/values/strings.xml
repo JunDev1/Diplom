@@ -15,4 +15,8 @@
     <string name="your_username">Your username</string>
     <string name="your_surname">Your surname</string>
     <string name="your_name">Your name</string>
+    <string name="hello_john">Hello John</string>
+    <string name="icon_message_row">icon_message_row</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
 </resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.MainActivity">
+    tools:context=".presentation.activities.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_container"
@@ -18,7 +18,6 @@
 
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph">
-
     </androidx.fragment.app.FragmentContainerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

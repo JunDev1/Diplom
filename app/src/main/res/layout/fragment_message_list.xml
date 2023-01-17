@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.MessageListFragment">
+    tools:context=".presentation.fragments.MessageListFragment"
+    android:id="@+id/chatFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messageListRowRV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/message_row"/>
 
 </FrameLayout>
