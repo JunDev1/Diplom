@@ -1,4 +1,4 @@
-package com.example.chatapp.domain.viewmodels.firebase
+package com.example.chatapp.domain
 
 import com.google.firebase.database.IgnoreExtraProperties
 
