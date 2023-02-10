@@ -19,4 +19,5 @@
     <string name="icon_message_row">icon_message_row</string>
     <string name="chat">Chat</string>
     <string name="profile">Profile</string>
+    <string name="next_step">Next step</string>
 </resources>

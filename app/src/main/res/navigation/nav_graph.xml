@@ -11,26 +11,21 @@
         android:label="fragment_auth"
         tools:layout="@layout/fragment_auth" >
         <action
-            android:id="@+id/action_authFragment_to_regFragment"
-            app:destination="@id/regFragment" />
+            android:id="@+id/action_authFragment_to_setNameSurnameFragment"
+            app:destination="@id/setNameSurnameFragment" />
     </fragment>
     <fragment
         android:id="@+id/regFragment"
         android:name="com.example.chatapp.presentation.fragments.RegFragment"
         android:label="fragment_reg"
-        tools:layout="@layout/fragment_reg" >
+        tools:layout="@layout/fragment_reg" />
+    <fragment
+        android:id="@+id/setNameSurnameFragment"
+        android:name="com.example.chatapp.presentation.fragments.SetNameSurnameFragment"
+        android:label="fragment_set_name_surname"
+        tools:layout="@layout/fragment_set_name_surname" >
         <action
-            android:id="@+id/action_regFragment_to_messageListFragment"
-            app:destination="@id/messageListFragment" />
+            android:id="@+id/action_setNameSurnameFragment_to_regFragment"
+            app:destination="@id/regFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/messageListFragment"
-        android:name="com.example.chatapp.presentation.fragments.MessageListFragment"
-        android:label="fragment_message_list"
-        tools:layout="@layout/fragment_message_list" />
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.chatapp.presentation.fragments.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
 </navigation>
