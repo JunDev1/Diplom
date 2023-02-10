@@ -14,6 +14,7 @@ import com.example.chatapp.func.replaceFragment
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.Observer
 
 private const val TAG = "ProfileFragment"
 
@@ -72,5 +73,6 @@ open class ProfileFragment : Fragment() {
         super.onDestroy()
         //удалить наблюдателя
     }
+
 }
 
