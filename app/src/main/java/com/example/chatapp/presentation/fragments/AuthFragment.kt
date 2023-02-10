@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
+import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentAuthBinding
 import com.example.chatapp.func.replaceFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +43,9 @@ class AuthFragment : Fragment() {
         }
         binding.signInBtn.setOnClickListener {
             authentication()
+        }
+        binding.signUpTv.setOnClickListener {
+            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToRegFragment())
         }
     }
 
