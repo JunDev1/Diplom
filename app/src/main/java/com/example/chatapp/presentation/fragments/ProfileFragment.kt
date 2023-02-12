@@ -10,11 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
-import com.example.chatapp.func.replaceFragment
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import java.util.Observer
 
 private const val TAG = "ProfileFragment"
 
@@ -29,17 +27,6 @@ open class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.bottomNavView.selectedItemId = R.id.item_profile
-        binding.bottomNavView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.item_chat -> {
-                    replaceFragment(MessageListFragment())
-                    Log.d(TAG, "Transaction replaced")
-                    true
-                }
-                else -> false
-            }
-        }
         return binding.root
     }
 
@@ -55,13 +42,7 @@ open class ProfileFragment : Fragment() {
         viewModel.gettingDataFromDB().observe(
             viewLifecycleOwner,
             usernameObserver
-        )  //activity as LifecycleOwner - 1ый параметр
-
-        exit.setOnClickListener {
-            Firebase.auth.signOut().apply {
-                replaceFragment(AuthFragment())
-            }
-        }
+        )
     }
 
     override fun onStart() {

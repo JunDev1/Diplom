@@ -13,12 +13,19 @@
         <action
             android:id="@+id/action_authFragment_to_setNameSurnameFragment"
             app:destination="@id/setNameSurnameFragment" />
+        <action
+            android:id="@+id/action_authFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
     </fragment>
     <fragment
         android:id="@+id/regFragment"
         android:name="com.example.chatapp.presentation.fragments.RegFragment"
         android:label="fragment_reg"
-        tools:layout="@layout/fragment_reg" />
+        tools:layout="@layout/fragment_reg" >
+        <action
+            android:id="@+id/action_regFragment_to_profileFragment2"
+            app:destination="@id/profileFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/setNameSurnameFragment"
         android:name="com.example.chatapp.presentation.fragments.SetNameSurnameFragment"
@@ -27,5 +34,19 @@
         <action
             android:id="@+id/action_setNameSurnameFragment_to_regFragment"
             app:destination="@id/regFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messageListFragment"
+        android:name="com.example.chatapp.presentation.fragments.MessageListFragment"
+        android:label="fragment_message_list"
+        tools:layout="@layout/fragment_message_list" />
+    <fragment
+        android:id="@+id/profileFragment2"
+        android:name="com.example.chatapp.presentation.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment2_to_messageListFragment"
+            app:destination="@id/messageListFragment" />
     </fragment>
 </navigation>
