@@ -16,7 +16,6 @@ const val TAG = "ProfileViewModel"
 open class ProfileViewModel : ViewModel() {
 
     private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
-    private val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
     val getName: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -30,7 +29,7 @@ open class ProfileViewModel : ViewModel() {
                 for (postSnapshot in snapshot.children) {
                     Log.i(TAG, "Getting data")
                     val data : User? = postSnapshot.getValue(User::class.java)
-                    getName.postValue(data!!.name.toString())
+                    getName.postValue(data!!.username.toString())
                 }
 
             }
