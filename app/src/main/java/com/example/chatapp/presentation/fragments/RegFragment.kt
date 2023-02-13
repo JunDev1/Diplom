@@ -1,7 +1,6 @@
 package com.example.chatapp.presentation.fragments
 
-import android.content.Intent
-import android.os.Bundle
+import  android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.databinding.FragmentRegBinding
-import com.example.chatapp.presentation.activities.SecondActivity
 import com.example.chatapp.presentation.viewmodels.RegViewModel
-
 
 private const val TAG = "RegFragment"
 private const val ARG_PARAM2 = "param2"
-
 
 class RegFragment : Fragment() {
 
