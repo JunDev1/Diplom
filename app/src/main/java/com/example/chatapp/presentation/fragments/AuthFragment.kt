@@ -34,9 +34,10 @@ class AuthFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.signInBtn.setOnClickListener {
 //            authentication()
+            findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
         }
         binding.signUpTv.setOnClickListener {
-            this.findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToSetNameSurnameFragment())
+            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToSetNameSurnameFragment())
         }
     }
 
