@@ -20,4 +20,6 @@
     <string name="chat">Chat</string>
     <string name="profile">Profile</string>
     <string name="next_step">Next step</string>
+    <string name="welcome_to_lotos">Welcome to Lotos</string>
+    <string name="fill_in_the_fields">Заполните поля</string>
 </resources>

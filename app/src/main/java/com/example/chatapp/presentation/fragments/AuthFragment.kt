@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentAuthBinding
+import com.example.chatapp.presentation.viewmodels.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -21,6 +24,9 @@ class AuthFragment : Fragment() {
 
     private var _binding: FragmentAuthBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by lazy {
+        ViewModelProvider(this)[AuthViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,12 +38,27 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.signInBtn.setOnClickListener {
-//            authentication()
-            findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
-        }
+        signIn()
+        signUp()
+    }
+
+    private fun signUp() {
         binding.signUpTv.setOnClickListener {
             findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToSetNameSurnameFragment())
+        }
+    }
+
+    private fun signIn() {
+        with(binding) {
+            val email = emailTfEt.text.toString()
+            val password = passwordTfEt.text.toString()
+            signInBtn.setOnClickListener {
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.fill_in_the_fields), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
