@@ -54,9 +54,14 @@ class AuthFragment : Fragment() {
             val password = passwordTfEt.text.toString()
             signInBtn.setOnClickListener {
                 if (email.isNotBlank() && password.isNotBlank()) {
+                    viewModel.signInWithEmail(email, password)
                     findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.fill_in_the_fields), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.fill_in_the_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }

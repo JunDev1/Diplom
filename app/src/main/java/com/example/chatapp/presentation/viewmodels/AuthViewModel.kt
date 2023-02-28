@@ -7,9 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 
 class AuthViewModel : ViewModel() {
     //переменная,которая предоставляет экземпляр к FirebaseAuth
-    private val auth = FirebaseAuth.getInstance()
 
     fun signInWithEmail(email : String, password : String) : Task<AuthResult> {
         return auth.signInWithEmailAndPassword(email,password)
+    }
+
+    companion object {
+        val auth = FirebaseAuth.getInstance()
     }
 }

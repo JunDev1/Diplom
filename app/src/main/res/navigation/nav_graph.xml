@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_regFragment_to_profileFragment2"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_regFragment_to_setNameSurnameFragment"
+            app:destination="@id/setNameSurnameFragment" />
     </fragment>
     <fragment
         android:id="@+id/setNameSurnameFragment"
