@@ -22,14 +22,13 @@ open class ProfileViewModel : ViewModel() {
     }
 
     fun gettingDataFromDB(): LiveData<String> {
-        //Log.i(TAG, "Getting data")
         val uid = dbRef.push().key!!
         dbRef.orderByChild(uid).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (postSnapshot in snapshot.children) {
                     Log.i(TAG, "Getting data")
                     val data : User? = postSnapshot.getValue(User::class.java)
-                    getName.postValue(data!!.username.toString())
+                    getName.postValue(data!!.nickname.toString())
                 }
 
             }
