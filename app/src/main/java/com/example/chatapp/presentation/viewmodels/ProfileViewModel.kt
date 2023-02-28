@@ -28,7 +28,7 @@ open class ProfileViewModel : ViewModel() {
                 for (postSnapshot in snapshot.children) {
                     Log.i(TAG, "Getting data")
                     val data : User? = postSnapshot.getValue(User::class.java)
-                    getName.postValue(data!!.username.toString())
+                    getName.postValue(data!!.nickname.toString())
                 }
 
             }

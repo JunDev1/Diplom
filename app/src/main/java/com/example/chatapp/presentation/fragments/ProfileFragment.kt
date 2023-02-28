@@ -8,11 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
-import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 private const val TAG = "ProfileFragment"
 
@@ -32,16 +29,16 @@ open class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val username = binding.usernameTV
+        val nickname = binding.nicknameTV
         val exit = binding.exitTV
 
-        val usernameObserver = Observer<String> {
-            username.text = it.toString()
+        val nicknameObserver = Observer<String> {
+            nickname.text = it.toString()
             Log.d(TAG, "Data takes successful")
         }
         viewModel.gettingDataFromDB().observe(
             viewLifecycleOwner,
-            usernameObserver
+            nicknameObserver
         )
     }
 
