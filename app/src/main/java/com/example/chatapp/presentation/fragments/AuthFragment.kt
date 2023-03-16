@@ -48,7 +48,6 @@ class AuthFragment : Fragment() {
             val email = emailTfEt.text.toString()
             val password = passwordTfEt.text.toString()
             signInBtn.setOnClickListener {
-
                 viewModel.login(email, password).observe(viewLifecycleOwner) {
                     if (email.isNotBlank() && password.isNotBlank()) {
                         viewModel.login(email, password)
