@@ -1,16 +1,13 @@
 package com.example.chatapp.presentation.fragments
 
-import  android.os.Bundle
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentRegBinding
 import com.example.chatapp.presentation.viewmodels.RegViewModel
 
@@ -46,25 +43,11 @@ class RegFragment : Fragment() {
     }
 
     private fun launchRegistration() {
-        binding.signUpBtn.setOnClickListener {
-            registration()
-        }
-    }
-
-    private fun registration() {
         with(binding) {
-            val email = emailTfEt.text.toString()
-            val password = passwordTfEt.text.toString()
-            val confirmPassword = confirmPasswordTfEt.text.toString()
-            if (email.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank() && password == confirmPassword) {
+            val email = binding.emailTfEt.text.toString()
+            val password = binding.passwordTfEt.text.toString()
+            signUpBtn.setOnClickListener {
                 viewModel.signUp(email, password)
-                findNavController().navigate(RegFragmentDirections.actionRegFragmentToProfileFragment2())
-            } else if (confirmPassword != password) {
-                passwordTf.error = getString(R.string.password_dont_match)
-                confirmPasswordTf.error = getString(R.string.password_dont_match)
-            } else if (password.isBlank() && confirmPassword.isBlank()) {
-                passwordTf.error = getString(R.string.fields_blank)
-                confirmPasswordTf.error = getString(R.string.fields_blank)
             }
         }
     }

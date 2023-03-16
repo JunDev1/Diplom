@@ -4,17 +4,44 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.chatapp.domain.AuthRepository
+import com.example.chatapp.domain.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 
-class RegViewModel() : ViewModel() {
+class RegViewModel(private val authRepository: AuthRepository) : ViewModel() {
+    fun signUp(email: String, password: String): LiveData<Result<Unit>> {
+        val resultLiveData = MutableLiveData<Result<Unit>>()
+        viewModelScope.launch {
+            resultLiveData.value = authRepository.signUp(email, password)
+        }
+        return resultLiveData
+    }
+    fun login(email: String, password: String): LiveData<Result<Unit>> {
+        val resultLiveData = MutableLiveData<Result<Unit>>()
+        viewModelScope.launch {
+            resultLiveData.value = authRepository.login(email, password)
+        }
+        return resultLiveData
+    }
 
-    private val auth = FirebaseAuth.getInstance()
-    private val _errorPassword = MutableLiveData<Boolean>()
+    fun logout(): LiveData<Result<Unit>> {
+        val resultLiveData = MutableLiveData<Result<Unit>>()
+        viewModelScope.launch {
+            resultLiveData.value = authRepository.logout()
+        }
+        return resultLiveData
+    }
 
-    fun signUp(email: String, password: String) : Task<AuthResult> {
-        return auth.createUserWithEmailAndPassword(email, password)
+    fun getCurrentUser(): LiveData<Result<User?>> {
+        val resultLiveData = MutableLiveData<Result<User?>>()
+        viewModelScope.launch {
+            resultLiveData.value = authRepository.getCurrentUser()
+        }
+        return resultLiveData
     }
 }
