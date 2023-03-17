@@ -1,44 +1,58 @@
 package com.example.chatapp.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.chatapp.domain.User
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import androidx.lifecycle.viewModelScope
+import com.example.chatapp.domain.ProfileRepository
+import com.example.chatapp.domain.model.User
+import kotlinx.coroutines.launch
 
 const val TAG = "ProfileViewModel"
 
-open class ProfileViewModel : ViewModel() {
+open class ProfileViewModel(private val profileRepository : ProfileRepository) : ViewModel() {
 
-    private val dbRef = FirebaseDatabase.getInstance().getReference("Users")
-
-    val getName: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
+    fun getNickname(nickname: String) : LiveData<Result<User>> {
+        val resultLiveData = MutableLiveData<Result<User>>()
+        viewModelScope.launch {
+            resultLiveData.value = profileRepository.getNickname(nickname)
+        }
+        return resultLiveData
     }
 
-    fun gettingDataFromDB(): LiveData<String> {
-        val uid = dbRef.push().key!!
-        dbRef.orderByChild(uid).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (postSnapshot in snapshot.children) {
-                    Log.i(TAG, "Getting data")
-                    val data : User? = postSnapshot.getValue(User::class.java)
-                    getName.postValue(data!!.nickname.toString())
-                }
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d(TAG, "loadPost: Error", error.toException())
-            }
-        })
-        return getName
+    fun getEmail(email : String) : LiveData<Result<User>> {
+        val resultLiveData = MutableLiveData<Result<User>>()
+        viewModelScope.launch {
+            resultLiveData.value = profileRepository.getEmail(email)
+        }
+        return resultLiveData
     }
+
+    fun getPhoto(photoUrl: String) : LiveData<Result<User>> {
+        val resultLiveData = MutableLiveData<Result<User>>()
+        viewModelScope.launch {
+            resultLiveData.value = profileRepository.getPhoto(photoUrl)
+        }
+        return resultLiveData
+    }
+//    fun gettingDataFromDB(): LiveData<String> {
+//        val uid = dbRef.push().key!!
+//        dbRef.orderByChild(uid).addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                for (postSnapshot in snapshot.children) {
+//                    Log.i(TAG, "Getting data")
+//                    val data : User? = postSnapshot.getValue(User::class.java)
+//                    getName.postValue(data!!.nickname.toString())
+//                }
+//
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d(TAG, "loadPost: Error", error.toException())
+//            }
+//        })
+//        return getName
+//    }
 
     override fun onCleared() {
         super.onCleared()

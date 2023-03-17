@@ -20,4 +20,6 @@
     <string name="fill_in_the_fields">Заполните поля</string>
     <string name="password_dont_match">Пароли не совпадают </string>
     <string name="fields_blank">Поля пустые</string>
+    <string name="your_email">Ваш email</string>
+    <string name="exit">Exit</string>
 </resources>

@@ -1,15 +1,14 @@
 package com.example.chatapp.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "ProfileFragment"
 
@@ -29,17 +28,24 @@ open class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val nickname = binding.nicknameTV
-        val exit = binding.exitTV
-
-        val nicknameObserver = Observer<String> {
-            nickname.text = it.toString()
-            Log.d(TAG, "Data takes successful")
+        with(binding) {
+            val nickname = nicknameTV.toString()
+            val exitInfo = exitTV
+            val email = emailTV.toString()
+            val photo = profileIV.toString()
+            viewModel.getEmail(email).observe(viewLifecycleOwner) {
+                return@observe
+            }
+            viewModel.getNickname(nickname).observe(viewLifecycleOwner) {
+                return@observe
+            }
+            viewModel.getPhoto(photo).observe(viewLifecycleOwner) {
+                return@observe
+            }
+            exitInfo.setOnClickListener {
+                //todo exit
+            }
         }
-        viewModel.gettingDataFromDB().observe(
-            viewLifecycleOwner,
-            nicknameObserver
-        )
     }
 
     override fun onStart() {
