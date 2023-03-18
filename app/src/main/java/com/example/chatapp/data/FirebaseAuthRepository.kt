@@ -1,7 +1,7 @@
 package com.example.chatapp.data
 
 import com.example.chatapp.domain.AuthRepository
-import com.example.chatapp.domain.User
+import com.example.chatapp.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
