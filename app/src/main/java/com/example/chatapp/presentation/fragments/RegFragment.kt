@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.databinding.FragmentRegBinding
+import com.example.chatapp.presentation.viewmodels.AuthViewModel
 import com.example.chatapp.presentation.viewmodels.RegViewModel
 
 private const val TAG = "RegFragment"
@@ -18,7 +19,9 @@ class RegFragment : Fragment() {
 
     private var _binding: FragmentRegBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: RegViewModel
+    private val viewModel by lazy {
+        ViewModelProvider(this)[RegViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,27 +33,26 @@ class RegFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[RegViewModel::class.java]
-        launchRegistration()
+//        launchRegistration()
         launchAuth()
     }
 
     private fun launchAuth() {
         binding.backToAuthTv.setOnClickListener {
-            findNavController().navigate(RegFragmentDirections.actionRegFragmentToSetNameSurnameFragment())
+            findNavController().navigate(RegFragmentDirections.actionRegFragmentToAuthFragment())
             Log.d(TAG, "Back to auth fragment")
         }
     }
 
-    private fun launchRegistration() {
-        with(binding) {
-            val email = binding.emailTfEt.text.toString()
-            val password = binding.passwordTfEt.text.toString()
-            signUpBtn.setOnClickListener {
-                viewModel.signUp(email, password)
-            }
-        }
-    }
+//    private fun launchRegistration() {
+//        with(binding) {
+//            val email = binding.emailTfEt.text.toString()
+//            val password = binding.passwordTfEt.text.toString()
+//            signUpBtn.setOnClickListener {
+//                viewModel.signUp(email, password)
+//            }
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

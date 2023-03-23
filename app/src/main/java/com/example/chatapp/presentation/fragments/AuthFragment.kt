@@ -9,19 +9,29 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
+import com.example.chatapp.data.AuthRepositoryImpl
 import com.example.chatapp.databinding.FragmentAuthBinding
+import com.example.chatapp.domain.AuthRepository
 import com.example.chatapp.presentation.viewmodels.AuthViewModel
+import com.example.chatapp.presentation.viewmodels.AuthViewModelFactory
 
 private const val TAG = "AuthFragment"
 private const val ARG_PARAM2 = "param2"
 
 
 class AuthFragment : Fragment() {
+    private val authRepository: AuthRepositoryImpl = AuthRepositoryImpl()
+    private val viewModelFactory by lazy {
+        AuthViewModelFactory(
+            authRepository
+        )
+    }
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+    }
     private var _binding: FragmentAuthBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by lazy {
-        ViewModelProvider(this)[AuthViewModel::class.java]
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +49,7 @@ class AuthFragment : Fragment() {
 
     private fun signUp() {
         binding.signUpTv.setOnClickListener {
-            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToSetNameSurnameFragment())
+            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToRegFragment())
         }
     }
 
@@ -50,7 +60,7 @@ class AuthFragment : Fragment() {
             signInBtn.setOnClickListener {
                 viewModel.login(email, password).observe(viewLifecycleOwner) {
                     if (email.isNotBlank() && password.isNotBlank()) {
-                        viewModel.login(email, password)
+//                        viewModel.login(email, password)
                         findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
                     } else {
                         Toast.makeText(
