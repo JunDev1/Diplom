@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +18,9 @@ open class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ProfileViewModel by viewModels()
+    private val viewModel by lazy {
+        ViewModelProvider(this)[ProfileViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +47,7 @@ open class ProfileFragment : Fragment() {
                 return@observe
             }
             exitInfo.setOnClickListener {
-                //todo exit
+                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToMessageListFragment())
             }
         }
     }
