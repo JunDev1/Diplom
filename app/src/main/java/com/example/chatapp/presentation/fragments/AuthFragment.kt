@@ -9,21 +9,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
-import com.example.chatapp.data.AuthRepositoryImpl
+import com.example.chatapp.data.ChatAppRepositoryImpl
 import com.example.chatapp.databinding.FragmentAuthBinding
-import com.example.chatapp.domain.AuthRepository
 import com.example.chatapp.presentation.viewmodels.AuthViewModel
-import com.example.chatapp.presentation.viewmodels.AuthViewModelFactory
+import com.example.chatapp.presentation.viewmodels.ViewModelFactory
 
 private const val TAG = "AuthFragment"
 private const val ARG_PARAM2 = "param2"
 
 
 class AuthFragment : Fragment() {
-    private val authRepository: AuthRepositoryImpl = AuthRepositoryImpl()
     private val viewModelFactory by lazy {
-        AuthViewModelFactory(
-            authRepository
+        ViewModelFactory(
+            chatAppRepositoryImpl = ChatAppRepositoryImpl()
         )
     }
     private val viewModel by lazy {
