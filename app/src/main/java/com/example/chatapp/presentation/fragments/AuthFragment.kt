@@ -4,30 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.chatapp.R
-import com.example.chatapp.data.AuthRepositoryImpl
 import com.example.chatapp.databinding.FragmentAuthBinding
-import com.example.chatapp.domain.AuthRepository
 import com.example.chatapp.presentation.viewmodels.AuthViewModel
-import com.example.chatapp.presentation.viewmodels.AuthViewModelFactory
 
 private const val TAG = "AuthFragment"
 private const val ARG_PARAM2 = "param2"
 
 
 class AuthFragment : Fragment() {
-    private val authRepository: AuthRepositoryImpl = AuthRepositoryImpl()
-    private val viewModelFactory by lazy {
-        AuthViewModelFactory(
-            authRepository
-        )
-    }
     private val viewModel by lazy {
-        ViewModelProvider(this, viewModelFactory)[AuthViewModel::class.java]
+        ViewModelProvider(this)[AuthViewModel::class.java]
     }
     private var _binding: FragmentAuthBinding? = null
     private val binding get() = _binding!!
@@ -43,37 +32,28 @@ class AuthFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        signIn()
-        signUp()
+        with(binding) {
+            signInBtn.setOnClickListener {
+                signIn()
+            }
+            signUpTv.setOnClickListener {
+                signUp()
+            }
+        }
     }
 
     private fun signUp() {
-        binding.signUpTv.setOnClickListener {
-            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToRegFragment())
-        }
+        findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToRegFragment())
+
     }
 
     private fun signIn() {
         with(binding) {
             val email = emailTfEt.text.toString()
             val password = passwordTfEt.text.toString()
-            signInBtn.setOnClickListener {
-                viewModel.login(email, password).observe(viewLifecycleOwner) {
-                    if (email.isNotBlank() && password.isNotBlank()) {
-//                        viewModel.login(email, password)
-                        findNavController().navigate(R.id.action_authFragment_to_profileFragment2)
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.fill_in_the_fields),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
+            viewModel.signIn(email, password)
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

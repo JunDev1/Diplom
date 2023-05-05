@@ -1,21 +1,23 @@
 package com.example.chatapp.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 private const val TAG = "ProfileFragment"
 
-open class ProfileFragment : Fragment() {
-
+class ProfileFragment : Fragment() {
+    private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel by lazy {
@@ -32,34 +34,26 @@ open class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            val nickname = nicknameTV.toString()
-            val exitInfo = exitTV
-            val email = emailTV.toString()
-            val photo = profileIV.toString()
-            viewModel.getEmail(email).observe(viewLifecycleOwner) {
-                return@observe
-            }
-            viewModel.getNickname(nickname).observe(viewLifecycleOwner) {
-                return@observe
-            }
-            viewModel.getPhoto(photo).observe(viewLifecycleOwner) {
-                return@observe
-            }
-            exitInfo.setOnClickListener {
-                findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToMessageListFragment())
-            }
-        }
+        launchSignOut()
+        //binding.nicknameTV.text = profileInfo()
     }
 
-    override fun onStart() {
-        super.onStart()
-        //запустить наблюдателя
+    private fun profileInfo() : String? {
+        val currentUser = auth.currentUser
+        return currentUser!!.displayName
+        Log.d("ProfileFragment", "${currentUser!!.displayName}")
+    }
+
+    private fun launchSignOut() {
+        binding.exitTV.setOnClickListener {
+            auth.signOut()
+            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToAuthFragment())
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        //удалить наблюдателя
+        _binding = null
     }
 
 }

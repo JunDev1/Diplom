@@ -42,5 +42,8 @@
         <action
             android:id="@+id/action_profileFragment_to_messageListFragment"
             app:destination="@id/messageListFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_authFragment"
+            app:destination="@id/authFragment" />
     </fragment>
 </navigation>
