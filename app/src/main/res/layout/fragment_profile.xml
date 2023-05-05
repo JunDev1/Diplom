@@ -19,22 +19,31 @@
         android:layout_marginBottom="450dp"/>
 
     <TextView
-        android:id="@+id/usernameTV"
+        android:id="@+id/nicknameTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/profileIV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
-        android:hint= "@string/your_name"/>
-
+        android:hint= "@string/your_nickname"/>
+    <TextView
+        android:id="@+id/emailTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/nicknameTV"
+        app:layout_constraintBottom_toTopOf="@id/exitTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:hint= "@string/your_email"/>
     <TextView
         android:id="@+id/exitTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/usernameTV"
+        app:layout_constraintTop_toBottomOf="@id/emailTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Exit"/>
+        android:text="@string/exit"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

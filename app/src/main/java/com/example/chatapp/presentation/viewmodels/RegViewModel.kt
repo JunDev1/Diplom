@@ -1,33 +1,34 @@
 package com.example.chatapp.presentation.viewmodels
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.chatapp.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseUser
 
 
-class RegViewModel() : ViewModel() {
+class RegViewModel(private val context: Context) : ViewModel() {
+    private val _authUser = MutableLiveData<FirebaseUser?>()
+    val authUser: LiveData<FirebaseUser?> = _authUser
 
-    private val _errorPassword = MutableLiveData<Boolean>()
-    val errorPassword : LiveData<Boolean>
-    get() = _errorPassword
-
-    private val _errorConfirmPassword = MutableLiveData<Boolean>()
-    val errorConfirmPassword : LiveData<Boolean>
-        get() = _errorConfirmPassword
-
-    fun registrationFirebase(email: String, password: String) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-        Log.d("RegViewModel", "Registration successful")
-    }
-    fun validPassword(password: String, confirmPassword: String) : Boolean {
-        var result = true
-        if (password.isBlank() || confirmPassword.isBlank()) {
-            _errorPassword.value = true
-            _errorConfirmPassword.value = true
-            result = false
+    fun createUser(auth: FirebaseAuth, email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val user = auth.currentUser
+                _authUser.value = user
+            } else {
+                val exception = it.exception
+                when (exception) {
+                    is FirebaseAuthUserCollisionException -> {
+                        Toast.makeText(context, "Пользователь уже существует", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
         }
-        return result
     }
 }

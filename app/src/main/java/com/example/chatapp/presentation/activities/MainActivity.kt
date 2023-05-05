@@ -32,14 +32,16 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.selectedItemId = R.id.item_profile
         val navController = setupNavController()
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.authFragment) {
-                binding.bottomNavView.visibility = View.GONE
-            } else if (destination.id == R.id.setNameSurnameFragment) {
-                binding.bottomNavView.visibility = View.GONE
-            } else if (destination.id == R.id.regFragment) {
-                binding.bottomNavView.visibility = View.GONE
-            } else {
-                binding.bottomNavView.visibility = View.VISIBLE
+            when (destination.id) {
+                R.id.authFragment -> {
+                    binding.bottomNavView.visibility = View.GONE
+                }
+                R.id.regFragment -> {
+                    binding.bottomNavView.visibility = View.GONE
+                }
+                else -> {
+                    binding.bottomNavView.visibility = View.VISIBLE
+                }
             }
         }
         binding.bottomNavView.setOnItemSelectedListener {
