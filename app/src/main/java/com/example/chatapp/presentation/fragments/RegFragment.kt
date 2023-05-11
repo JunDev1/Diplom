@@ -1,19 +1,27 @@
 package com.example.chatapp.presentation.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
+import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentRegBinding
 import com.example.chatapp.domain.model.User
 import com.example.chatapp.presentation.viewmodels.RegViewModel
 import com.example.chatapp.presentation.viewmodels.ViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -22,7 +30,7 @@ import com.google.firebase.database.ValueEventListener
 private const val TAG = "RegFragment"
 
 class RegFragment : Fragment() {
-    private val databaseReference = FirebaseDatabase.getInstance().reference.child("users1")
+    private val databaseReference = FirebaseDatabase.getInstance().reference
     private var _binding: FragmentRegBinding? = null
     private val binding get() = _binding!!
     private val auth = FirebaseAuth.getInstance()
@@ -59,66 +67,79 @@ class RegFragment : Fragment() {
                 val nickname = nicknameTfEt.text.toString()
                 val email = emailTfEt.text.toString()
                 val password = passwordTfEt.text.toString()
-                if (email.isNotBlank() && password.isNotBlank()) {
-                    viewModel.createUser(auth, email, password)
-                    databaseReference.addValueEventListener(
-                        object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                val post: User? = snapshot.getValue(User::class.java)
-                                post?.let {
-                                    post.nickname = nickname
-                                    post.email = email
-                                    databaseReference.setValue(post)
-                                }
-                            }
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.w(TAG, "loadPost:onCancelled", error.toException())
-                            }
-                        })
-                    findNavController().navigate(RegFragmentDirections.actionRegFragmentToProfileFragment2())
+                if (nickname.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
+                    confirmPassword()
                 } else {
-                    Toast.makeText(requireActivity(), "Ваши поля пустые", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireActivity(), R.string.fields_blank, Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
-
     }
 
-//    private fun getCurrentUser() {
-//        if (currentUser != null) {
-//            val userRef = database.child("users").child(currentUser.uid)
-//            val userData = HashMap<String, Any>()
-//            userData["username"] = binding.nicknameTfEt.text.toString()
-//            userRef.setValue(userData)
-//                .addOnSuccessListener {
-//                    Log.d("RegFragment", "User created")
-//                }
-//                .addOnFailureListener {
-//                    Log.d("RegFragment", "User can't created")
-//                }
-//        }
-//    }
+    private fun confirmPassword() {
+        with(binding) {
+            val nickname = nicknameTfEt.text.toString()
+            val email = emailTfEt.text.toString()
+            val password = passwordTfEt.text.toString()
+            val confirmPassword = confirmPasswordTfEt.text.toString()
+            if (confirmPassword == password) {
+                createUser(auth, nickname, email, password)
+            } else {
+                Toast.makeText(requireContext(), R.string.password_dont_match, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 
-//    private fun setUserName(user: FirebaseUser?, nickname: String) {
-//        if (user != null) {
-//            val profileUpdates =
-//                UserProfileChangeRequest.Builder().setDisplayName(nickname).build()
-//            user.updateProfile(profileUpdates).addOnCompleteListener {
-//                if (it.isSuccessful) {
-//                    Log.d("RegFragment", "Profile updates ${nickname.toString()}")
-//                } else {
-//                    Log.d("RegFragment", "Profile not updates")
-//                }
-//            }
-//        }
-//    }
+    private fun createUser(auth: FirebaseAuth, nickname: String, email: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val currentUser = auth.currentUser
+                val userUid = currentUser?.uid
+                val email = binding.emailTfEt.text.toString()
 
+                if (userUid != null) {
+                    val user = User(nickname, email)
+                    val userRef = databaseReference.child("users").child(userUid)
+                    userRef.setValue(user).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            findNavController().navigate(RegFragmentDirections.actionRegFragmentToProfileFragment2())
+                        } else {
+                            Log.e(
+                                "RegFragment",
+                                "Failed to write user data to Firebase",
+                                it.exception
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "RegFragment",
+                        "Failed to register user in Firebase Authentication",
+                        it.exception
+                    )
+                }
+
+            } else {
+                when (it.exception) {
+                    is FirebaseAuthUserCollisionException -> {
+                        Toast.makeText(context, "Пользователь уже существует", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setNickname(nickname: LiveData<FirebaseUser?>) {
+        nickname.observe(viewLifecycleOwner) {
+            binding.nicknameTfEt.text.toString()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
     }
 }
