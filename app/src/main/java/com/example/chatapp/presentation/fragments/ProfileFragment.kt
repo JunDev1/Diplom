@@ -1,18 +1,20 @@
 package com.example.chatapp.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.databinding.FragmentProfileBinding
+import com.example.chatapp.domain.model.User
 import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 private const val TAG = "ProfileFragment"
 
@@ -35,13 +37,25 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         launchSignOut()
-        //binding.nicknameTV.text = profileInfo()
+        profileInfo()
     }
 
-    private fun profileInfo() : String? {
-        val currentUser = auth.currentUser
-        return currentUser!!.displayName
-        Log.d("ProfileFragment", "${currentUser!!.displayName}")
+    private fun profileInfo() {
+        val userUid = FirebaseAuth.getInstance().currentUser!!.uid
+        FirebaseDatabase.getInstance().reference.child("users").child(userUid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val user : User? = snapshot.getValue(User::class.java)
+                        val nickname = user?.nickname
+                        binding.nicknameTV.text = nickname
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
     private fun launchSignOut() {
