@@ -32,10 +32,14 @@ class AuthFragment : Fragment() {
     ): View {
         _binding = FragmentAuthBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (auth.currentUser != null) {
+            findNavController().navigate(AuthFragmentDirections.actionAuthFragmentToProfileFragment2())
+        }
         with(binding) {
             signInBtn.setOnClickListener {
                 launchSignIn()
