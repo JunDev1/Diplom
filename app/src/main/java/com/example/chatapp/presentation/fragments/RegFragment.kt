@@ -1,39 +1,39 @@
 package com.example.chatapp.presentation.fragments
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
 import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentRegBinding
 import com.example.chatapp.domain.model.User
 import com.example.chatapp.presentation.viewmodels.RegViewModel
 import com.example.chatapp.presentation.viewmodels.ViewModelFactory
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+
 
 private const val TAG = "RegFragment"
 
 class RegFragment : Fragment() {
+    private var selectedPhotoUri: Uri? = null
+    private val storageRef = FirebaseStorage.getInstance().reference
     private val databaseReference = FirebaseDatabase.getInstance().reference
+    private val auth = FirebaseAuth.getInstance()
+
     private var _binding: FragmentRegBinding? = null
     private val binding get() = _binding!!
-    private val auth = FirebaseAuth.getInstance()
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[RegViewModel::class.java]
     }
@@ -53,6 +53,25 @@ class RegFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         launchRegistration()
         launchAuth()
+        binding.profileIv.setOnClickListener {
+            pickImage()
+        }
+    }
+
+    private fun pickImage() {
+        ImagePicker.with(this).galleryOnly().start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (requestCode == ImagePicker.REQUEST_CODE) {
+                val uri: Uri? = data?.data
+                binding.profileIv.setImageURI(uri)
+                selectedPhotoUri = uri
+                Log.d(TAG, "${selectedPhotoUri.toString()}")
+            }
+        }
     }
 
     private fun launchAuth() {
@@ -92,19 +111,47 @@ class RegFragment : Fragment() {
         }
     }
 
-    private fun createUser(auth: FirebaseAuth, nickname: String, email: String, password: String) {
+    private fun createUser(
+        auth: FirebaseAuth,
+        nickname: String,
+        email: String,
+        password: String,
+    ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 val currentUser = auth.currentUser
                 val userUid = currentUser?.uid
                 val email = binding.emailTfEt.text.toString()
-
+                storageRef.putFile(selectedPhotoUri!!)
                 if (userUid != null) {
-                    val user = User(nickname, email)
+                    val user = User(
+                        nickname,
+                        email,
+                        photoImageUrl = selectedPhotoUri.toString()
+                    )
                     val userRef = databaseReference.child("users").child(userUid)
                     userRef.setValue(user).addOnCompleteListener {
                         if (it.isSuccessful) {
+                            selectedPhotoUri?.let {
+                                val photoRef = storageRef.child("images/$userUid/${userUid}.jpg")
+                                photoRef.putFile(it).addOnSuccessListener {
+                                    it.storage.downloadUrl.addOnSuccessListener {
+                                        val photoImageUrl = it.toString()
+                                        // Обновление ссылки на фотографию в базе данных
+                                        userRef.child("photoImageUrl").setValue(photoImageUrl)
+                                    }.addOnFailureListener { e ->
+                                        Log.e(TAG, "Failed to get download URL", e)
+                                        // Обработка ошибки при получении URL загруженной фотографии
+                                    }
+                                }.addOnFailureListener { e ->
+                                    Log.e(TAG, "Failed to upload photo to Firebase Storage", e)
+                                    // Обработка ошибки при загрузке фотографии в Firebase Storage
+                                }
+                            } ?: run {
+                                findNavController().navigate(RegFragmentDirections.actionRegFragmentToProfileFragment2())
+                            }
                             findNavController().navigate(RegFragmentDirections.actionRegFragmentToProfileFragment2())
+
                         } else {
                             Log.e(
                                 "RegFragment",
@@ -120,7 +167,6 @@ class RegFragment : Fragment() {
                         it.exception
                     )
                 }
-
             } else {
                 when (it.exception) {
                     is FirebaseAuthUserCollisionException -> {
@@ -129,12 +175,6 @@ class RegFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private fun setNickname(nickname: LiveData<FirebaseUser?>) {
-        nickname.observe(viewLifecycleOwner) {
-            binding.nicknameTfEt.text.toString()
         }
     }
 

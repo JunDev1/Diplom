@@ -31,19 +31,8 @@ import com.google.firebase.storage.FirebaseStorage
 private const val TAG = "ProfileFragment"
 
 class ProfileFragment : Fragment() {
-    private lateinit var selectedImage: String
-    private val storageRef = FirebaseStorage.getInstance().reference
-    private val imagePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            try {
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data: Intent? = result.data
-                    handleImagePickerResult(data)
-                }
-            } catch (e: Exception) {
-                Log.e("ProfileFragment", e.message.toString())
-            }
-        }
+    //private val uri : Uri =
+    private val database = FirebaseDatabase.getInstance().reference
     private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -63,46 +52,23 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         launchSignOut()
         profileInfo()
-        binding.profileIV.setOnClickListener {
-            if (checkPermission()) {
-                openImagePicker()
-            } else {
-                requestPermission()
-            }
-        }
     }
 
-    private fun checkPermission(): Boolean {
-        val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-        val result = ContextCompat.checkSelfPermission(requireContext(), permission)
-        return result == PackageManager.PERMISSION_GRANTED
-    }
 
-    private fun requestPermission() {
-        val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(permission),
-            PERMISSION_REQUEST_CODE
-        )
-    }
-
-    private fun openImagePicker() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        imagePickerLauncher.launch(intent)
-    }
 
     private fun profileInfo() {
         val userUid = FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseDatabase.getInstance().reference.child("users").child(userUid)
+        database.child("users").child(userUid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         val user: User? = snapshot.getValue(User::class.java)
                         val nickname = user?.nickname
                         val email = user?.email
+                        val profilePhotoUrl = user?.photoImageUrl
                         binding.nicknameTV.text = nickname
                         binding.emailTV.text = email
+                        //binding.profileIV.setImageURI()
                     }
                 }
 
@@ -112,47 +78,6 @@ class ProfileFragment : Fragment() {
             })
     }
 
-    private fun handleImagePickerResult(data: Intent?) {
-        val uri: Uri? = data?.data
-        if (uri != null) {
-            val fileName = getFileName(uri)
-            val imageRef = storageRef.child("images/$fileName")
-            imageRef.putFile(uri).addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener {
-                    selectedImage = uri.toString()
-                    Glide.with(this)
-                        .load(selectedImage)
-                        .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-                        .into(binding.profileIV)
-                }.addOnFailureListener {
-                    Toast.makeText(requireContext(), it.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-//        uri?.let {
-//            selectedImage = uri.toString()
-//            // Отображение выбранного изображения с помощью Glide
-//            Glide.with(this)
-//                .load(selectedImage)
-//                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-//                .into(binding.profileIV)
-        //                }
-    }
-
-    private fun getFileName(uri: Uri): String {
-        val contentResolver = requireContext().contentResolver
-        val cursor = contentResolver.query(uri, null, null, null, null)
-        return if (cursor != null) {
-            cursor.moveToFirst()
-            val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME)
-            val fileName = cursor.getString(index)
-            cursor.close()
-            fileName
-        } else {
-            uri.lastPathSegment ?: ""
-        }
-    }
 
     private fun launchSignOut() {
         binding.exitTV.setOnClickListener {
