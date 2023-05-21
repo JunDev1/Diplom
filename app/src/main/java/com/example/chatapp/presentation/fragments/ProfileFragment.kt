@@ -1,24 +1,15 @@
 package com.example.chatapp.presentation.fragments
 
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -31,8 +22,10 @@ import com.google.firebase.storage.FirebaseStorage
 private const val TAG = "ProfileFragment"
 
 class ProfileFragment : Fragment() {
-    //private val uri : Uri =
+    private val userUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val database = FirebaseDatabase.getInstance().reference
+    private val storageRef = FirebaseStorage.getInstance().reference
+    private val photoRef = storageRef.child("images/$userUid/${userUid}.jpg")
     private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -55,9 +48,7 @@ class ProfileFragment : Fragment() {
     }
 
 
-
     private fun profileInfo() {
-        val userUid = FirebaseAuth.getInstance().currentUser!!.uid
         database.child("users").child(userUid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -65,10 +56,17 @@ class ProfileFragment : Fragment() {
                         val user: User? = snapshot.getValue(User::class.java)
                         val nickname = user?.nickname
                         val email = user?.email
-                        val profilePhotoUrl = user?.photoImageUrl
                         binding.nicknameTV.text = nickname
                         binding.emailTV.text = email
-                        //binding.profileIV.setImageURI()
+                        photoRef.downloadUrl.addOnSuccessListener { uri ->
+                            Log.d(TAG, uri.toString())
+                            Glide.with(requireContext()).load(uri).diskCacheStrategy(
+                                DiskCacheStrategy.ALL
+                            ).placeholder(R.drawable.ic_baseline_account_circle_24)
+                                .into(binding.profileIV)
+                        }.addOnFailureListener {exception ->
+                            Log.e(TAG, "Failed to get photo URL from FirebaseStorage", exception)
+                        }
                     }
                 }
 

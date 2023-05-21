@@ -135,10 +135,11 @@ class RegFragment : Fragment() {
                             selectedPhotoUri?.let {
                                 val photoRef = storageRef.child("images/$userUid/${userUid}.jpg")
                                 photoRef.putFile(it).addOnSuccessListener {
-                                    it.storage.downloadUrl.addOnSuccessListener {
-                                        val photoImageUrl = it.toString()
+                                    it.storage.downloadUrl.addOnSuccessListener { uri ->
+                                        val photoImageUrl = uri.toString()
                                         // Обновление ссылки на фотографию в базе данных
                                         userRef.child("photoImageUrl").setValue(photoImageUrl)
+                                        Log.d(TAG, uri.toString())
                                     }.addOnFailureListener { e ->
                                         Log.e(TAG, "Failed to get download URL", e)
                                         // Обработка ошибки при получении URL загруженной фотографии
