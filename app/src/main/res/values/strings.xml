@@ -24,4 +24,5 @@
     <string name="auth_error">Неверный email или пароль</string>
     <string name="your_email">Ваш email</string>
     <string name="exit">Exit</string>
+    <string name="how_are_you">How are you?</string>
 </resources>

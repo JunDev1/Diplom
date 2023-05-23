@@ -29,9 +29,6 @@ class ProfileFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-//    private val viewModel by lazy {
-//        ViewModelProvider(this)[ProfileViewModel::class.java]
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
