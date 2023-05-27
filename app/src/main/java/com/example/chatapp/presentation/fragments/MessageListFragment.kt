@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.databinding.FragmentMessageListBinding
@@ -20,6 +22,7 @@ class MessageListFragment : Fragment() {
     private lateinit var messageListRecyclerView: RecyclerView
     private lateinit var databaseReference: DatabaseReference
     private lateinit var valueEventListener: ValueEventListener
+    private lateinit var navController: NavController
 
     private var _binding: FragmentMessageListBinding? = null
     private val binding get() = _binding!!
@@ -37,13 +40,21 @@ class MessageListFragment : Fragment() {
         setupRecyclerView()
         setupFirebase()
         loadMessageList()
+        Log.d(TAG, "View Created")
     }
 
     private fun setupRecyclerView() {
-        messageListAdapter = MessageListAdapter()
-        binding.messageListRowRV.adapter = messageListAdapter
-        binding.messageListRowRV.layoutManager = LinearLayoutManager(requireContext())
+        navController = Navigation.findNavController(
+            requireActivity(),
+            com.example.chatapp.R.id.nav_host_fragment
+        )
+        messageListAdapter = MessageListAdapter(navController)
+        binding.messageListRowRV.apply {
+            adapter = messageListAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
+
     private fun setupFirebase() {
         // Получите ссылку на вашу ветку в FirebaseDatabase
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
@@ -60,12 +71,14 @@ class MessageListFragment : Fragment() {
                 messageListAdapter.setUsers(userList)
                 Log.d(TAG, dataSnapshot.value.toString())
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e(TAG, databaseError.message)
                 // Обработка ошибок при чтении из FirebaseDatabase
             }
         }
     }
+
     private fun loadMessageList() {
         val messageList = mutableListOf<User>()
         databaseReference.addValueEventListener(valueEventListener)

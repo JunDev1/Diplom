@@ -10,6 +10,7 @@
     android:layout_marginEnd="16dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="1dp"
+    android:id="@+id/item_cv"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout

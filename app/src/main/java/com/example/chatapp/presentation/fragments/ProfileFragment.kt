@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -29,6 +31,8 @@ class ProfileFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private lateinit var navController: NavController
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,9 +79,17 @@ class ProfileFragment : Fragment() {
 
 
     private fun launchSignOut() {
+        navController = Navigation.findNavController(
+            requireActivity(),
+            com.example.chatapp.R.id.nav_host_fragment
+        )
         binding.exitTV.setOnClickListener {
             auth.signOut()
-            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToAuthFragment())
+            val action = MessageListFragmentDirections.actionMessageListFragmentToChatWindowFragment()
+            navController.navigate(action)
+
+            //findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToAuthFragment())
+
         }
     }
 

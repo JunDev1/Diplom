@@ -2,40 +2,36 @@ package com.example.chatapp.presentation.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.chatapp.R
+import com.example.chatapp.databinding.MessageRowBinding
 import com.example.chatapp.domain.model.User
+import com.example.chatapp.presentation.fragments.MessageListFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
 private const val TAG = "MessageListAdapter"
 
-class MessageListAdapter : RecyclerView.Adapter<MessageListAdapter.MessageListViewHolder>() {
-
+class MessageListAdapter(
+    private val navController: NavController
+) : RecyclerView.Adapter<MessageListAdapter.MessageListViewHolder>() {
     private val users = ArrayList<User>()
+//    private val action = navController.navigate(MessageListFragmentDirections.actionMessageListFragmentToChatWindowFragment())
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageListViewHolder {
-        val userView = LayoutInflater.from(parent.context).inflate(
-            R.layout.message_row,
-            parent,
-            false
-        )
-        return MessageListViewHolder(userView)
+        val binding = MessageRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MessageListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: MessageListViewHolder, position: Int) {
         val currentUser = users[position]
-
-
         holder.bind(currentUser)
     }
 
@@ -49,10 +45,21 @@ class MessageListAdapter : RecyclerView.Adapter<MessageListAdapter.MessageListVi
         notifyDataSetChanged()
     }
 
-    class MessageListViewHolder(userView: View) : RecyclerView.ViewHolder(userView) {
-        //private val cardView = userView.findViewById<CardView>(R.id.message_row)
-        private val nickname = userView.findViewById<TextView>(R.id.tv_message_row)
-        private val photoProfile = userView.findViewById<ImageView>(R.id.icon_message_row)
+    inner class MessageListViewHolder(val binding: MessageRowBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val cardView = binding.itemCv
+        private val nickname = binding.tvMessageRowName
+        private val photoProfile = binding.iconMessageRow
+
+        init {
+            binding.itemCv.setOnClickListener {
+
+                // Создание действия навигации с передачей необходимых данных
+                val action = MessageListFragmentDirections.actionMessageListFragmentToChatWindowFragment()
+
+                // Навигация к указанному действию
+                navController.navigate(action)
+            }
+        }
 
         fun bind(user: User) {
             val storageRef = FirebaseStorage.getInstance().reference

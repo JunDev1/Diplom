@@ -33,7 +33,11 @@
         android:id="@+id/messageListFragment"
         android:name="com.example.chatapp.presentation.fragments.MessageListFragment"
         android:label="fragment_message_list"
-        tools:layout="@layout/fragment_message_list" />
+        tools:layout="@layout/fragment_message_list" >
+        <action
+            android:id="@+id/action_messageListFragment_to_chatWindowFragment"
+            app:destination="@id/chatWindowFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.chatapp.presentation.fragments.ProfileFragment"
@@ -46,4 +50,9 @@
             android:id="@+id/action_profileFragment_to_authFragment"
             app:destination="@id/authFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/chatWindowFragment"
+        android:name="com.example.chatapp.presentation.fragments.ChatWindowFragment"
+        android:label="fragment_chat_window"
+        tools:layout="@layout/fragment_chat_window" />
 </navigation>
