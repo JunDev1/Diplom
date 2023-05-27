@@ -1,30 +1,38 @@
 package com.example.chatapp.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.chatapp.R
 import com.example.chatapp.databinding.FragmentProfileBinding
 import com.example.chatapp.domain.model.User
-import com.example.chatapp.presentation.viewmodels.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 
 private const val TAG = "ProfileFragment"
 
 class ProfileFragment : Fragment() {
+    private val userUid = FirebaseAuth.getInstance().currentUser!!.uid
+    private val database = FirebaseDatabase.getInstance().reference
+    private val storageRef = FirebaseStorage.getInstance().reference
+    private val photoRef = storageRef.child("images/$userUid/${userUid}.jpg")
     private val auth = FirebaseAuth.getInstance()
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
-    }
+    private lateinit var navController: NavController
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,15 +48,26 @@ class ProfileFragment : Fragment() {
         profileInfo()
     }
 
+
     private fun profileInfo() {
-        val userUid = FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseDatabase.getInstance().reference.child("users").child(userUid)
+        database.child("users").child(userUid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val user : User? = snapshot.getValue(User::class.java)
+                        val user: User? = snapshot.getValue(User::class.java)
                         val nickname = user?.nickname
+                        val email = user?.email
                         binding.nicknameTV.text = nickname
+                        binding.emailTV.text = email
+                        photoRef.downloadUrl.addOnSuccessListener { uri ->
+                            Log.d(TAG, uri.toString())
+                            Glide.with(requireContext()).load(uri).diskCacheStrategy(
+                                DiskCacheStrategy.ALL
+                            ).placeholder(R.drawable.ic_baseline_account_circle_24)
+                                .into(binding.profileIV)
+                        }.addOnFailureListener {exception ->
+                            Log.e(TAG, "Failed to get photo URL from FirebaseStorage", exception)
+                        }
                     }
                 }
 
@@ -58,16 +77,29 @@ class ProfileFragment : Fragment() {
             })
     }
 
+
     private fun launchSignOut() {
+        navController = Navigation.findNavController(
+            requireActivity(),
+            com.example.chatapp.R.id.nav_host_fragment
+        )
         binding.exitTV.setOnClickListener {
             auth.signOut()
-            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToAuthFragment())
+            val action = MessageListFragmentDirections.actionMessageListFragmentToChatWindowFragment()
+            navController.navigate(action)
+
+            //findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToAuthFragment())
+
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 123
     }
 
 }

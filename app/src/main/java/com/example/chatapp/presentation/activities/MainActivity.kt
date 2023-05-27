@@ -6,17 +6,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.chatapp.R
 import com.example.chatapp.databinding.ActivityMainBinding
 import com.example.chatapp.presentation.fragments.MessageListFragment
 import com.example.chatapp.presentation.fragments.ProfileFragment
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "MainActivity"
 
@@ -30,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.d(TAG, "Created mainActivity")
         binding.bottomNavView.selectedItemId = R.id.item_profile
+
+
         val navController = setupNavController()
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
@@ -60,13 +59,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.main_container, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, fragment)
             .addToBackStack(null).commit()
     }
 
     private fun setupNavController(): NavController {
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         findViewById<BottomNavigationView>(R.id.bottomNavView).setupWithNavController(navController)
         return navController
